@@ -19,9 +19,14 @@ const rateLimiter = rateLimit({
     windowMs: 60 * 1000,
     max: 3000,
 });
+app.get('/api/health', (req, res) => {
+    res.status(200).json({
+        message: 'server is running fine.'
+    })
 
+})
 app.use('/api/payments', rateLimiter, paymentsRoutes);
-app.use('/api/webhooks', rateLimiter, webhooksRoutes);
+// app.use('/api/webhooks', rateLimiter, webhooksRoutes);
 
 app.use(errorHandler);
 
