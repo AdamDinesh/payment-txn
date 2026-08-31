@@ -13,7 +13,11 @@ const app = express();
 app.use(helmet());
 app.use(cors());
 app.use(morgan('dev'));
-app.use(express.json());
+app.use(express.json({
+    verify: (req, res, buf) => {
+        req.rawBody = buf;
+    }
+}));
 
 const rateLimiter = rateLimit({
     windowMs: 60 * 1000,
@@ -26,7 +30,7 @@ app.get('/api/health', (req, res) => {
 
 })
 app.use('/api/payments', rateLimiter, paymentsRoutes);
-// app.use('/api/webhooks', rateLimiter, webhooksRoutes);
+app.use('/api/webhooks', rateLimiter, webhooksRoutes);
 
 app.use(errorHandler);
 

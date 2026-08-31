@@ -24,8 +24,8 @@ const getById = asyncHandler(async (req, res) => {
     return res.status(200).json(payment)
 })
 const updateStatus = asyncHandler(async (req, res) => {
-    const { status, source, note } = req.body;
-    const result = await paymentService.updatePaymentStatus(req.params.id, status, source, note);
+    const { status, note } = req.body;
+    const result = await paymentService.updatePaymentStatus(req.params.id, status, 'API', note);
     return res.status(200).json(result)
 })
 

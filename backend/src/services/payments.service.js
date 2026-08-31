@@ -132,16 +132,20 @@ const ALLOWED_TRANSITIONS = {
     FAILED: []
 }
 
-async function updatePaymentStatus(id, newStatus, source, note = null) {
-    const client = await db.connect();
+async function updatePaymentStatus(id, newStatus, source, note = null, client = null) {
+    const dbClient = client || await db.connect();
     try {
-        await client.query('BEGIN');
+        if (!client) {
+            await dbClient.query('BEGIN');
+        }
         //1. check payments, if does not exist, rollback and return it.
-        const result = await client.query(`
+        const result = await dbClient.query(`
         SELECT * FROM payments WHERE id = $1 FOR UPDATE
         `, [id])
         if (result.rows.length === 0) {
-            await client.query('ROLLBACK');
+            if (!client) {
+                await dbClient.query('ROLLBACK');
+            }
 
             return {
                 statusCode: 404,
@@ -157,7 +161,9 @@ async function updatePaymentStatus(id, newStatus, source, note = null) {
 
         const allowedStatus = ALLOWED_TRANSITIONS[payment.status] || [];
         if (!allowedStatus.includes(newStatus)) {
-            await client.query('ROLLBACK');
+            if (!client) {
+                await dbClient.query('ROLLBACK');
+            }
             return {
                 statusCode: 409,
                 body: {
@@ -170,16 +176,18 @@ async function updatePaymentStatus(id, newStatus, source, note = null) {
         }
 
         //3. update payment status
-        const updatedResult = await client.query(
+        const updatedResult = await dbClient.query(
             ` UPDATE payments SET status = $1, updated_at = now() WHERE id = $2 RETURNING *`, [newStatus, id]
         );
 
         //4. create payment history
-        await client.query(
+        await dbClient.query(
             `INSERT INTO payment_history(payment_id,old_status,new_status,source,note) VALUES ($1, $2, $3, $4, $5)`,
             [id, payment.status, newStatus, source, note]
         )
-        await client.query('COMMIT');
+        if (!client) {
+            await dbClient.query('COMMIT');
+        }
         //5. send response
         return {
             statusCode: 200,
@@ -189,11 +197,15 @@ async function updatePaymentStatus(id, newStatus, source, note = null) {
         }
     }
     catch (error) {
-        await client.query('ROLLBACK')
+        if (!client) {
+            await dbClient.query('ROLLBACK');
+        }
         throw error;
     }
     finally {
-        client.release();
+        if (!client) {
+            dbClient.release();
+        }
     }
 }
 
