@@ -1,6 +1,6 @@
 import { useState } from 'react';
+import { toast } from "sonner";
 import { createPayment } from '../api/paymentsApi';
-
 const initialForm = {
   merchantRef: '',
   customerName: '',
@@ -65,9 +65,11 @@ function PaymentForm({ onCreated, onClose }) {
       );
       setForm(initialForm);
       onCreated(data.payment);
+      toast.success("Payment created");
     } catch (err) {
       const message = err.response?.data?.error?.message || 'Something went wrong, try again';
       setServerError(message);
+      toast.error("Failed Payment creation");
     } finally {
       setSubmitting(false);
     }

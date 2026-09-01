@@ -3,7 +3,7 @@ function Pagination({ page, totalPages, onPageChange }) {
   const pages = totalPages || 1;
 
   return (
-    <div className="flex items-center justify-center gap-3 py-4">
+    <div className="flex items-center justify-center gap-3 py-1">
       <button
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage <= 1}

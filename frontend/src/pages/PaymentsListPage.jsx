@@ -4,6 +4,7 @@ import PaymentForm from '../components/PaymentForm';
 import PaymentTable from '../components/PaymentTable';
 import Pagination from '../components/Pagination';
 import Modal from '../components/Modal';
+import { Error, Loading } from '../components/icon';
 
 const PAGE_SIZE = 10;
 
@@ -65,6 +66,11 @@ function PaymentsListPage() {
       setPage(1);
     }
   }
+  function handleClearFilters() {
+    setStatusFilter("");
+    setFromDate("");
+    setToDate("");
+  };
 
   const filtersActive = Boolean(statusFilter || fromDate || toDate);
   const totalPages = Math.ceil(total / PAGE_SIZE);
@@ -72,24 +78,18 @@ function PaymentsListPage() {
   return (
     <div>
       <div className="max-w-5xl mx-auto p-6 space-y-6">
-        <div className="flex items-center justify-between">
-          <h1 className="text-xl font-semibold tracking-tight">Payment Transactions</h1>
-          <button
-            onClick={() => setShowAddModal(true)}
-            className="w-9 h-9 flex items-center justify-center rounded-full bg-gray-800 text-white hover:bg-gray-700 text-lg leading-none"
-            title="Add payment"
-          >
-            +
-          </button>
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-xl font-semibold tracking-tight text-gray-900">Payment Transactions</h1>
+
         </div>
 
-        <div className="flex flex-wrap gap-4 items-end bg-white p-4 rounded shadow-sm">
-          <div className="flex flex-col gap-1">
-            <label className="text-sm">Status</label>
+        <div className="flex flex-wrap items-end gap-4 bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-medium text-gray-500">Status</label>
             <select
               value={statusFilter}
               onChange={handleStatusChange}
-              className="border rounded px-2 py-1"
+              className="h-9 border border-gray-300 rounded-md px-2.5 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-400"
             >
               <option value="">All statuses</option>
               <option value="INITIATED">Initiated</option>
@@ -98,28 +98,47 @@ function PaymentsListPage() {
               <option value="FAILED">Failed</option>
             </select>
           </div>
-          <div className="flex flex-col gap-1">
-            <label className="text-sm">From</label>
+
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-medium text-gray-500">From</label>
             <input
               type="date"
               value={fromDate}
               onChange={handleFromChange}
-              className="border rounded px-2 py-1"
+              className="h-9 border border-gray-300 rounded-md px-2.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-400"
             />
           </div>
-          <div className="flex flex-col gap-1">
-            <label className="text-sm">To</label>
+
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-medium text-gray-500">To</label>
             <input
               type="date"
               value={toDate}
               onChange={handleToChange}
-              className="border rounded px-2 py-1"
+              className="h-9 border border-gray-300 rounded-md px-2.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900/10 focus:border-gray-400"
             />
           </div>
+
+          {(statusFilter || fromDate || toDate) && (
+            <button
+              onClick={handleClearFilters}
+              className="h-9 px-3 text-sm text-gray-500 hover:text-gray-900 transition-colors"
+            >
+              Clear filters
+            </button>
+          )}
+
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="leading-none ml-auto flex items-center gap-1.5 h-9 px-3.5 rounded-lg bg-gray-900 text-white text-sm font-medium hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2"
+          >
+            <span className="text-base leading-none ">+</span>
+            Add payment
+          </button>
         </div>
 
-        {loading && <p className="text-sm text-gray-500">Loading payments...</p>}
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {loading && <Loading />}
+        {error && <Error error={error} />}
 
         {!loading && !error && (
           <>
