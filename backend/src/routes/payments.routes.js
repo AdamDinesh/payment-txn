@@ -6,9 +6,9 @@ const validate = require('../middleware/validate');
 const { createPaymentSchema, updateStatusSchema } = require('../validators/payment.schema');
 
 router.post('/', validate(createPaymentSchema), paymentsController.create);
-router.get('/', validate(updateStatusSchema), paymentsController.getAll);
+router.get('/', paymentsController.getAll);
 router.get('/:id', paymentsController.getById);
-router.patch('/:id/status', paymentsController.updateStatus);
+router.patch('/:id/status', validate(updateStatusSchema), paymentsController.updateStatus);
 
 
 module.exports = router;

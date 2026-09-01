@@ -13,15 +13,15 @@ const create = asyncHandler(async (req, res) => {
 const getAll = asyncHandler(async (req, res) => {
     const { status, from, to, page, limit } = req.query;
     const result = await paymentService.getAllPayments(status, from, to, page, limit);
-    return res.status(200).json(result)
+    return res.status(result.statusCode).json(result.body);
 })
 const getById = asyncHandler(async (req, res) => {
 
-    const payment = await paymentService.getPaymentById(req.params.id);
-    if (!payment) {
+    const result = await paymentService.getPaymentById(req.params.id);
+    if (!result) {
         return res.status(404).json({ error: { message: 'Payment not found' } })
     }
-    return res.status(200).json(payment)
+    return res.status(result.statusCode).json(result.body);
 })
 const updateStatus = asyncHandler(async (req, res) => {
     const { status, note } = req.body;
