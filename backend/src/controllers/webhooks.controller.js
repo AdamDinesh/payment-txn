@@ -20,10 +20,6 @@ const providerWebhook = asyncHandler(async (req, res) => {
         .digest();
 
 
-    // console.log('RAW BODY:', req.rawBody.toString());
-    // console.log('SIGNATURE:', signature);
-    // console.log('EXPECTED:', expected.toString('hex'));
-
     if (
         received.length !== expected.length ||
         !crypto.timingSafeEqual(received, expected)
