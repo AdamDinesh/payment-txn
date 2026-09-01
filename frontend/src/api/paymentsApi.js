@@ -19,7 +19,7 @@ export async function getPaymentById(id) {
   return res.data;
 }
 
-export async function updatePaymentStatus(id, status) {
-  const res = await axios.patch(`${API_BASE}/payments/${id}/status`, { status });
+export async function updatePaymentStatus(id, status, note) {
+  const res = await axios.patch(`${API_BASE}/payments/${id}/status`, { status, note });
   return res.data;
 }
