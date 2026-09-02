@@ -6,11 +6,11 @@ const createPaymentSchema = z.object({
     customerEmail: z.string().email('customerEmail must be a valid email'),
     amount: z.number().positive('amount must be greater than 0'),
     currency: z.string().length(3).optional().default('INR'),
-});
+}).strict();
 
 const updateStatusSchema = z.object({
     status: z.enum(['INITIATED', 'PENDING', 'SUCCESS', 'FAILED']),
     note: z.string().max(500).optional()
-});
+}).strict();
 
 module.exports = { createPaymentSchema, updateStatusSchema };
