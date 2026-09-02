@@ -33,9 +33,11 @@ database transactions.
 
 ## Live Application
 
-**Frontend:** `https://payment-txn.vercel.app/`
-**Backend API:** `https://payment-txn.onrender.com/`
-**Health Check:** `https://payment-txn.onrender.com/api/health`
+- **Frontend:** [https://payment-txn.vercel.app](https://payment-txn.vercel.app)
+- **Backend API:** [https://payment-txn.onrender.com](https://payment-txn.onrender.com)
+- **Health Check:** [https://payment-txn.onrender.com/api/health](https://payment-txn.onrender.com/api/health)
+
+The frontend URL is the main entry point for accessing the application.
 
 ## Screenshots
 
