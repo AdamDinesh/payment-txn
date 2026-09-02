@@ -35,7 +35,7 @@ describe('POST /api/webhooks/provider', () => {
             .set('X-Webhook-Signature', 'invalid-signature')
             .send({
                 transactionId,
-                providerReference: 'PROV-TEST-001',
+                providerRef: 'PROV-TEST-001',
                 status: 'SUCCESS',
                 timestamp: new Date().toISOString()
             });

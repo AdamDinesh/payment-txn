@@ -1,7 +1,11 @@
 const db = require('../src/config/db');
-
+const { blockProduction } = require('./db-safety');
 async function clearDatabase() {
+
     try {
+        if (blockProduction('db:reset')) {
+            return;
+        }
         await db.query(`
 TRUNCATE TABLE payment_webhooks, payment_history, idempotency_keys, payments RESTART IDENTITY CASCADE
         `);

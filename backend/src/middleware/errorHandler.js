@@ -6,10 +6,7 @@ function errorHandler(err, req, res, next) {
     if (process.env.NODE_ENV === 'production') {
         return res.status(statusCode).json({
             error: {
-                message:
-                    statusCode === 500
-                        ? 'Internal server error'
-                        : err.message,
+                message: statusCode === 500 ? 'Internal server error' : err.message,
             },
         });
     }

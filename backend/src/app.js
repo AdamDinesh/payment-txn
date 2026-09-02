@@ -1,18 +1,27 @@
 const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
+const hpp = require('hpp');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 
 const paymentsRoutes = require('./routes/payments.routes');
 const webhooksRoutes = require('./routes/webhooks.routes');
+const healthCheck = require('./controllers/health.controller');
 const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
 
 app.use(helmet());
-app.use(cors());
+
+app.use(cors({
+    origin: process.env.FRONTEND_URL
+}));
+
+app.use(hpp());
+
 app.use(morgan('dev'));
+
 app.use(express.json({
     verify: (req, res, buf) => {
         req.rawBody = buf;
@@ -21,14 +30,10 @@ app.use(express.json({
 
 const rateLimiter = rateLimit({
     windowMs: 60 * 1000,
-    max: 3000,
+    max: 100,
 });
-app.get('/api/health', (req, res) => {
-    res.status(200).json({
-        message: 'server is running fine.'
-    })
 
-})
+app.get('/api/health', healthCheck);
 app.use('/api/payments', rateLimiter, paymentsRoutes);
 app.use('/api/webhooks', rateLimiter, webhooksRoutes);
 

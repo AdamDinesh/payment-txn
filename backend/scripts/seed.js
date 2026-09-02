@@ -1,7 +1,12 @@
 const db = require('../src/config/db');
+const { blockProduction } = require('./db-safety');
 
 async function seedDatabase() {
+
     try {
+        if (blockProduction('db:reset')) {
+            return;
+        }
         await db.query('BEGIN');
 
         // 1. create payments

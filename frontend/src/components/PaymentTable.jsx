@@ -28,10 +28,10 @@ function PaymentTable({ payments, filtersActive, onAddPayment }) {
         <thead>
           <tr className="text-left bg-[#163D48] text-white">
             <th className="p-3 font-semibold border border-gray-300">Transaction ID</th>
-            <th className="p-3 font-semibold border border-gray-300">Merchant ref</th>
+            <th className="p-3 font-semibold border border-gray-300">Merchant Ref</th>
             <th className="p-3 font-semibold border border-gray-300">Amount</th>
             <th className="p-3 font-semibold border border-gray-300">Status</th>
-            <th className="p-3 font-semibold border border-gray-300">Provider ref</th>
+            <th className="p-3 font-semibold border border-gray-300">Provider Ref</th>
             <th className="p-3 font-semibold border border-gray-300">Created</th>
           </tr>
         </thead>
