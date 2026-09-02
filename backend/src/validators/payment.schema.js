@@ -9,11 +9,7 @@ const createPaymentSchema = z.object({
 });
 
 const updateStatusSchema = z.object({
-    status: z.enum([
-        'PENDING',
-        'SUCCESS',
-        'FAILED'
-    ]),
+    status: z.enum(['INITIATED', 'PENDING', 'SUCCESS', 'FAILED']),
     note: z.string().max(500).optional()
 });
 
