@@ -17,8 +17,7 @@ async function createPayment(data, idempotencyKey) {
 
             if (record.request_hash !== requestHash) {
                 return {
-                    statusCode: 409,
-                    body: {
+                    statusCode: 409, body: {
                         error: { message: 'Idempotency key already used with a different request' }
                     }
                 }
@@ -70,7 +69,7 @@ async function getPaymentById(id) {
     }
 
     const historyResult = await db.query(`
-        SELECT * FROM payment_history WHERE payment_id = $1 ORDER BY created_at ASC
+        SELECT * FROM payment_history WHERE payment_id = $1 ORDER BY created_at DESC
         `, [id])
 
     return {
@@ -147,14 +146,7 @@ async function updatePaymentStatus(id, newStatus, source, note = null, client = 
                 await dbClient.query('ROLLBACK');
             }
 
-            return {
-                statusCode: 404,
-                body: {
-                    error: {
-                        message: "Payment not found."
-                    }
-                }
-            }
+            return { statusCode: 404, body: { error: { message: "Payment not found." } } }
         }
         const payment = result.rows[0];
         //2. check allowed transistion status, if doesn not match, rollback and return it.
@@ -165,13 +157,10 @@ async function updatePaymentStatus(id, newStatus, source, note = null, client = 
                 await dbClient.query('ROLLBACK');
             }
             return {
-                statusCode: 409,
-                body: {
-                    error: {
-                        message: `Cannot move from ${payment.status} to ${newStatus}`,
-                    }
-                }
+                statusCode: 409, body:
+                    { error: { message: `Cannot move from ${payment.status} to ${newStatus}`, } }
             }
+
 
         }
 
@@ -189,12 +178,7 @@ async function updatePaymentStatus(id, newStatus, source, note = null, client = 
             await dbClient.query('COMMIT');
         }
         //5. send response
-        return {
-            statusCode: 200,
-            body: {
-                payment: updatedResult.rows[0]
-            }
-        }
+        return { statusCode: 200, body: { payment: updatedResult.rows[0] } }
     }
     catch (error) {
         if (!client) {

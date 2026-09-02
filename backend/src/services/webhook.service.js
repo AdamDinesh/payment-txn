@@ -1,4 +1,6 @@
+const crypto = require('crypto');
 const db = require('../config/db')
+const asyncHandler = require('../utils/asyncHandler');
 const { updatePaymentStatus } = require('./payments.service')
 
 async function handleProviderWebhook(data) {
@@ -14,24 +16,17 @@ async function handleProviderWebhook(data) {
 
         if (existing.rows.length > 0) {
             await client.query('COMMIT');
-            return {
-                statusCode: 200, body: {
-                    message: 'Webhook already processed',
+            return { statusCode: 200, body: { message: 'Webhook already processed' } };
 
-                }
-            };
         }
         // 2. update payment and history.
-        const result = await updatePaymentStatus(
-            transactionId,
-            status,
-            'WEBHOOK',
-            null, client
-        );
+        const result = await updatePaymentStatus(transactionId, status, 'WEBHOOK', null, client);
+
         // 3. create payment webhook
         await client.query(`
         INSERT INTO payment_webhooks(payment_id,provider_ref,status,payload) VALUES ($1, $2, $3, $4)
         `, [transactionId, providerRef, status, data]);
+
         // 4. commit and send response
         await client.query('COMMIT');
         return result;
@@ -44,5 +39,12 @@ async function handleProviderWebhook(data) {
         client.release();
     }
 }
+const generateWebhookSignature = asyncHandler(async (req, res) => {
+    const signature = crypto
+        .createHmac('sha256', process.env.WEBHOOK_SECRET)
+        .update(req.rawBody)
+        .digest('hex');
 
-module.exports = { handleProviderWebhook }
+    return res.status(200).json({ signature });
+});
+module.exports = { handleProviderWebhook, generateWebhookSignature }
