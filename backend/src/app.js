@@ -32,10 +32,20 @@ const rateLimiter = rateLimit({
     windowMs: 60 * 1000,
     max: 100,
 });
+app.get('/', (req, res) => {
+    res.json({
+        status: 'ok',
+        message: 'Payment Transaction API is running. Try /api/health for a health check.'
+    });
+});
 
 app.get('/api/health', healthCheck);
 app.use('/api/payments', rateLimiter, paymentsRoutes);
 app.use('/api/webhooks', rateLimiter, webhooksRoutes);
+
+app.use((req, res) => {
+    res.status(404).json({ status: 'error', message: 'Route not found' });
+});
 
 app.use(errorHandler);
 
